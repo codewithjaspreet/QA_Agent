@@ -2,11 +2,23 @@ from glob import glob
 from llama_index import (
     Document,
     ServiceContext,
+    SimpleDirectoryReader,
     StorageContext,
     SummaryIndex,
     service_context,
     load_index_from_storage,
 )
+from glob import glob
+
+from llama_index.query_engine.multistep_query_engine import (
+    MultiStepQueryEngine,
+)
+from llama_index.indices.query.query_transform.base import (
+            StepDecomposeQueryTransform,
+        )
+from llama_index import LLMPredictor
+
+    
 from llama_index.agent import FnRetrieverOpenAIAgent
 from llama_index.node_parser import SimpleNodeParser
 
@@ -27,7 +39,13 @@ class MyLLMAgent:
     def __init__(self):
         self.loading_index = {}
 
-    def load_index(self, user_query, selected_engine):
+
+    def load_api_key(self):
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+        
+
+    def load_index(self, query, selected_engine):
         d = 1536
         faiss_index = faiss.IndexFlatL2(d)
         vector_store = FaissVectorStore(faiss_index=faiss_index)
@@ -257,6 +275,40 @@ class MyLLMAgent:
         return str(response)
 
     # Other methods remain unchanged
+
+    # def flareQueryEngine(self, user_query):
+
+    def MultiStepEngine(self, user_query):
+        # Method implementation for MultiStepEngine
+        # LLM Predictor (gpt-3)
+        # documents = SimpleDirectoryReader(input_files = glob("ACTS/*")).load_data()
+        # print(f"Loaded {len(documents)} Pages.")
+
+        gpt3 = OpenAI(temperature=0, model="text-davinci-003")
+        service_context_gpt3 = ServiceContext.from_defaults(llm=gpt3)
+
+        # index = VectorStoreIndex.from_documents(documents)
+
+        # gpt-3
+        step_decompose_transform_gpt3 = StepDecomposeQueryTransform(
+            LLMPredictor(llm=gpt3), verbose=True
+        )
+
+        index_summary = "Used to answer questions legal questions relevant to certain Acts"
+   
+
+        #gpt-3
+        query_engine = index.as_query_engine(service_context=service_context_gpt3)
+        query_engine = MultiStepQueryEngine(
+            query_engine=query_engine,
+            query_transform=step_decompose_transform_gpt3,
+            index_summary=index_summary,
+        )
+
+        response_gpt3 = query_engine.query(user_query)
+
+        return str(response_gpt3)
+
 
 # Example of usage in app.py:
 # my_agent = MyLLMAgent()

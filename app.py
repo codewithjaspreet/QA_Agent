@@ -9,16 +9,16 @@ st.write("Unleash the power of LLMs over your data 🦙")
 
 # Sidebar Options
 engine_options = [
-    'Retriever Router Engine',
-    'Multi Step Engine',
-    'Flare Query Engine',
-    'Multi Doc Agent Engine',
-    'Self Correcting Engine',
-    'Recursive Retriever Engine'
+    'Retriever Router Engine'
+    # 'Multi Step Engine',
+    # 'Flare Query Engine',
+    # 'Multi Doc Agent Engine',
+    # 'Self Correcting Engine',
+    # 'Recursive Retriever Engine'
 ]
 
 selected_engine = st.sidebar.selectbox(
-    'Select an Engine:', engine_options, index=0, help="Choose the engine for processing"
+    'Avaliable Engine:', engine_options, index=0, help="Choose the engine for processing"
 )
 
 # Display Engine Description in Sidebar
@@ -39,20 +39,33 @@ st.sidebar.write("Description:", selected_engine_description)
 # Create an instance of MyLLMAgent
 my_agent = MyLLMAgent()
 
-query = st.text_input("Enter your Question")
+query = st.chat_input("Enter your Question")
 
-if st.button("Execute Query"):
-    if selected_engine == 'Retriever Router Engine':
-        print("Retriever Router Engine---Method Started")
-        summary_dict = my_agent.load_index(query, selected_engine)
-        res = my_agent.RetrieverRouterEngine(summary_dict, query)
-        st.write(res)
-        print('Index Loaded')
-    elif selected_engine == 'Multi Doc Agent Engine':
-        print("Multi Doc Agent Engine Method Started")
-        res = my_agent.MultiDocAgentsEngine(query)
-        print('Index Loaded')
-        st.write(res)
-    # Add other engine cases as needed
-    elif selected_engine == 'Self Correcting Engine':
-        response = my_agent.SelfCorrectingEngine(query, selected_engine)
+import streamlit as st
+
+if query:
+    with st.spinner("Loading..."):
+        if selected_engine == 'Retriever Router Engine':
+            print("Retriever Router Engine---Method Started")
+            my_agent.load_api_key()
+            summary_dict = my_agent.load_index(query, selected_engine)
+            res = my_agent.RetrieverRouterEngine(summary_dict, query)
+            st.write(res)
+            print('Index Loaded')
+        elif selected_engine == 'Multi Doc Agent Engine':
+            my_agent.load_api_key()
+            print("Multi Doc Agent Engine Method Started")
+            res = my_agent.MultiDocAgentsEngine(query)
+            print('Index Loaded')
+            st.write(res)
+        # Add other engine cases as needed
+        elif selected_engine == 'Self Correcting Engine':
+            my_agent.load_api_key()
+            response = my_agent.SelfCorrectingEngine(query, selected_engine)
+        elif selected_engine == 'Multi Step Engine':
+            my_agent.load_api_key()
+            my_agent.load_index()
+            response = my_agent.MultiStepEngine(query) 
+
+    # The spinner will automatically stop when code execution reaches here
+    # You can continue with your logic after the response is received
