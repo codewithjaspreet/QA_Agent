@@ -1,8 +1,10 @@
+import os
 import openai
 import streamlit as st
 from engines import MyLLMAgent
 
 # Streamlit App Title and Introduction
+openai.api_key = os.getenv("OPENAI_API_KEY")
 st.title("Legalify.ai 🦙")
 st.write("Unleash the power of LLMs over your data 🦙")
 
