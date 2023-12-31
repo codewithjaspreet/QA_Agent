@@ -1,9 +1,12 @@
+import openai
 import streamlit as st
 from engines import MyLLMAgent
 
 # Streamlit App Title and Introduction
 st.title("Legalify.ai 🦙")
 st.write("Unleash the power of LLMs over your data 🦙")
+
+import streamlit as st
 
 # User Input for Query
 
@@ -17,13 +20,22 @@ engine_options = [
     # 'Recursive Retriever Engine'
 ]
 
+
+
+
 selected_engine = st.sidebar.selectbox(
     'Avaliable Engine:', engine_options, index=0, help="Choose the engine for processing"
 )
 
 # Display Engine Description in Sidebar
 engine_descriptions = {
-    'Retriever Router Engine': "Engine description for Retriever Router.",
+    'Retriever Router Engine': """
+
+Given a relevant context and a task in the input prompt, Large Language Models (LLMs) can effectively reason over novel information that was not observed in the training set to solve the task at hand. As a result, a popular usage mode of LLMs is to solve Question-Answering (QA) tasks over your private data. They are typically paired with a “retrieval model” to form an overall “Retrieval-Augmented Generation” (RAG) system.
+
+
+
+""",
     'Multi Step Engine': "Engine description for Multi Step.",
     'Flare Query Engine': "Engine description for Flare Query.",
     'Multi Doc Agent Engine': "Engine description for Multi Doc Agent.",
@@ -36,36 +48,41 @@ selected_engine_description = engine_descriptions.get(
 )
 st.sidebar.write("Description:", selected_engine_description)
 
+
 # Create an instance of MyLLMAgent
 my_agent = MyLLMAgent()
 
 query = st.chat_input("Enter your Question")
 
-import streamlit as st
 
 if query:
-    with st.spinner("Loading..."):
-        if selected_engine == 'Retriever Router Engine':
-            print("Retriever Router Engine---Method Started")
-            my_agent.load_api_key()
-            summary_dict = my_agent.load_index(query, selected_engine)
-            res = my_agent.RetrieverRouterEngine(summary_dict, query)
-            st.write(res)
-            print('Index Loaded')
-        elif selected_engine == 'Multi Doc Agent Engine':
-            my_agent.load_api_key()
-            print("Multi Doc Agent Engine Method Started")
-            res = my_agent.MultiDocAgentsEngine(query)
-            print('Index Loaded')
-            st.write(res)
-        # Add other engine cases as needed
-        elif selected_engine == 'Self Correcting Engine':
-            my_agent.load_api_key()
-            response = my_agent.SelfCorrectingEngine(query, selected_engine)
-        elif selected_engine == 'Multi Step Engine':
-            my_agent.load_api_key()
-            my_agent.load_index()
-            response = my_agent.MultiStepEngine(query) 
 
-    # The spinner will automatically stop when code execution reaches here
-    # You can continue with your logic after the response is received
+   
+    
+
+
+        with st.spinner("Generating Answer..."):
+        # Your code here
+            if selected_engine == 'Retriever Router Engine':
+                print("Retriever Router Engine---Method Started")
+                # my_agent.load_api_key()
+                summary_dict = my_agent.load_index(query, selected_engine)
+                res = my_agent.RetrieverRouterEngine(summary_dict, query)
+                st.write(res)
+                print('Index Loaded')
+
+
+        # elif selected_engine == 'Multi Doc Agent Engine':
+        #     my_agent.load_api_key()
+        #     print("Multi Doc Agent Engine Method Started")
+        #     res = my_agent.MultiDocAgentsEngine(query)
+        #     print('Index Loaded')
+        #     st.write(res)
+        # # Add other engine cases as needed
+        # elif selected_engine == 'Self Correcting Engine':
+        #     my_agent.load_api_key()
+        #     response = my_agent.SelfCorrectingEngine(query, selected_engine)
+        # elif selected_engine == 'Multi Step Engine':
+        #     my_agent.load_api_key()
+        #     my_agent.load_index()
+        #     response = my_agent.MultiStepEngine(query) 
