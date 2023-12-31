@@ -4,6 +4,7 @@ import streamlit as st
 from engines import MyLLMAgent
 
 # Streamlit App Title and Introduction
+st.set_page_config(page_title="Legalify.ai 🦙", page_icon="🦙", layout="wide")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.title("Legalify.ai 🦙")
 st.write("Unleash the power of LLMs over your data 🦙")
@@ -58,10 +59,6 @@ query = st.chat_input("Enter your Question")
 
 
 if query:
-
-   
-    
-
 
         with st.spinner("Generating Answer..."):
         # Your code here
